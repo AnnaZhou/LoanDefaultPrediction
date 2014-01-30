@@ -41,6 +41,7 @@ package Classifiers {
           weights -= gs * alpha
         }
         if (err > t) {
+          prinln("Error: " + err)
           train()
         }
     }
