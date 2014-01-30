@@ -5,47 +5,66 @@ import BIDMat.Solvers._
 import scala.collection.mutable.ListBuffer
 import scala.math
 
+import scala.io.Source
+
 package Classifiers {
 
-  object lineTest {
+  object runner {
     def main(args: Array[String]) {
-      val x:FMat = (1 \ 1 \ 1) on (2 \ 2 \ 2) on (3 \ 3 \ 3)
-      val y:FMat = 1 on 2 on 3
-      val c = new LRClassifier(new ListBuffer() += x, new ListBuffer() += y, 0.001, 0.0001)
+      val c = new LRClassifier(0.001, 0.0001)
+      c.chunks()
       c.train()
-      println("examples: ")
-      println(x)
-      println("labels: ")
-      println(y)
-      println("Learned Weights:")
+
       println(c.weights)
     }
+
   }
 
-
-  class LRClassifier(examples: ListBuffer[FMat], labels: ListBuffer[FMat], a: Double, t: Double) {
-    val numFeatures = examples(0).ncols
-    val trainingSet = examples.zip(labels)
+  class LRClassifier(a: Float, t: Float) {
+    var X_train: ListBuffer[FMat]
+    var Y_train: FMat = null
+    val numFeatures = X_train(0).ncols
     var weights: FMat = zeros(numFeatures, 1) //single column of weights, with numRows = numFeatures
-    var alpha: Double = a
-    
+    var alpha: Float = a
+
     def gradients(W:FMat, X:FMat, Y:FMat): FMat = (((X*W) - Y).t * (2*X)).t
 
     def error(gs:FMat): Float = sum(abs(gs), 1)(0,0)
 
     def train() {
-        var err = 0.0f
-        for ( (x,y) <- trainingSet ) {
-          val gs = gradients(weights, x, y)
-          err += error(gs)
-          weights -= gs * alpha
-        }
-        if (err > t) {
-          train()
-        }
+      var err = 0.0f
+      for (X <- X_train ) {
+        val gs = gradients(weights, X, Y_train)
+        err += error(gs)
+        weights -= gs * alpha
+      }
+      if (err > t) {
+        train()
+      }
     }
 
     def predict(x: FMat): Float = (x*weights)(0,0)
+
+    def chunks() {
+      var X_train: ListBuffer[FMat] = new ListBuffer[FMat]()
+
+      val Y: ListBuffer[Float] = new ListBuffer[Float]()
+      for (line <- Source.fromFile("train.csv").getLines()) {
+        val buf: ListBuffer[Float] = new ListBuffer[Float]()
+        val splits: Array[String] = line.split(",")
+        val dubs: Array[Float] = splits.map(s => s.toFloat())
+
+        val mat: FMat = new FMat(1, 800, dubs.slice(1, 802))
+        X_train.append(mat)
+        Y.append(dubs.get(801))
+
+
+      }
+      var Y_train: FMat = new FMat(Y.size(), 1, Y.asArray())
+      this.X_train = X_train
+      this.Y_train = Y_train
+    }
+
   }
 
 }
