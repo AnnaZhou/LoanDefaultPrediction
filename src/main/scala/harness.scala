@@ -1,5 +1,6 @@
 import scala.io.Source
 import BIDMat.FMat
+import BIDMat.MatFunctions.{row, col}
 import scala.collection.mutable.ListBuffer
 import Classifiers._
 
@@ -13,25 +14,17 @@ package Main {
       var i: Int = 0
       for( line <- Source.fromFile("train_cleaned.csv").getLines() ) {
         if (i > 0) {
-          val splits: ListBuffer[Float] = new ListBuffer()
-          for (f <- line.split(",").map(x => x.toFloat)) {
-            splits.append(f)
-          }
-          val xarr: Array[Float] = new Array[Float](778)
-          val yarr: Array[Float] = new Array[Float](1)
-
-          splits.slice(1, 779).copyToArray(xarr)
-          splits.slice(779, 780).copyToArray(yarr)
-          val xmat: FMat = new FMat(1, 778, xarr)
-          val ymat: FMat = new FMat(1, 1, yarr)
-          X_train.append(xmat)
-          Y_train.append(ymat)
+          val r = line.split(",").map(x => x.toFloat)
+          val (example, label) = r.splitAt(r.length-1)
+          X_train += row(example)
+          Y_train += col(label)
         }
         i += 1
+        if (1%10000 == 0) { println(i + " rows consumed") }
       }
       println("" + X_train.size + " rows of data")
       
-      val classifier = new LRClassifier(X_train, Y_train, 0.001, 0.0001)
+      val classifier = new LRClassifier(X_train, Y_train, 0.00000001, 0.0001)
       classifier.train()
       println("Weights: " + classifier.weights)
 
