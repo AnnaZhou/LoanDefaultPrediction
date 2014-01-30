@@ -40,9 +40,9 @@ with open(sys.argv[1]+'_cleaned.csv', 'w') as f:
         for i,c in enumerate(line.split(',')[1:]):
             f.write(',')
             try:
-                f.write(str(float(c)))
+                f.write("%f" % float(c))
             except:
-                f.write(str(avgs[i]))
+                f.write("%f" % avgs[i])
         f.write('\n')
         
         if lines % 10000 == 0:
