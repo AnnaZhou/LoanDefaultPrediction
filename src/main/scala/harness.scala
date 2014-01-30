@@ -17,8 +17,8 @@ package Main {
         if (i > 0) {
           val r = line.split(",").map(x => x.toFloat)
           val (example, label) = r.splitAt(r.length-1)
-          X_train += FMat(row(example.map(x => math.log(math.abs(x.toFloat) + 0.000001))))
-          Y_train += FMat(col(label))
+          X_train += row(example)
+          Y_train += col(label)
         }
         i += 1
         if (1%10000 == 0) { println(i + " rows consumed") }
