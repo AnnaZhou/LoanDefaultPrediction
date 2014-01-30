@@ -13,5 +13,4 @@ project/plugins/project/
 .scala_dependencies
 
 *.csv
-/LoanDefaultPrediction/nbproject/private/
-/LoanDefaultPrediction/build/
+.DS_Store
