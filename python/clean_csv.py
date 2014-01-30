@@ -1,4 +1,5 @@
 import sys
+import math
 
 # First pass over the data: average all columns.
 # Second pass: replace each NA with the average for that column
@@ -16,7 +17,7 @@ for line in open(sys.argv[1], 'r'):
 
     for i,c in enumerate(line.split(',')[1:]):
         try:
-            totals[i] += float(c)
+            totals[i] += math.log(abs(float(c) + 0.001))
             counts[i] += 1
         except:
             pass
@@ -29,18 +30,24 @@ print 'Averages:', avgs
 
 lines = 0
 with open(sys.argv[1]+'_cleaned.csv', 'w') as f:
+    label_i = 0
     for line in open(sys.argv[1], 'r'):
         if lines == 0:
             f.write(line)
             lines += 1
             continue
+        if label_i == 0:
+            label_i = len(line.split(','))-2
         f.write(str(lines))
         lines += 1
 
         for i,c in enumerate(line.split(',')[1:]):
             f.write(',')
             try:
-                f.write("%f" % float(c))
+                if i == label_i:
+                    f.write("%f" % float(c))
+                else:
+                    f.write("%f" % math.log(abs(float(c))))
             except:
                 f.write("%f" % avgs[i])
         f.write('\n')
