@@ -24,7 +24,7 @@ package Main {
         if (1%10000 == 0) { println(i + " rows consumed") }
       }
       println("" + X_train.size + " rows of data")
-      val classifier = new LRClassifier(X_train, Y_train, 0.0005d, 0.0001)
+      val classifier = new LRClassifier(X_train, Y_train, 0.00001d, 0.0001)
       println("The labels: " + Y_train)
       classifier.train()
       println("Weights: " + classifier.weights)

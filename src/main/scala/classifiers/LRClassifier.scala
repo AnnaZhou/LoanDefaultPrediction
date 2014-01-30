@@ -44,7 +44,6 @@ package Classifiers {
     def error(gs:FMat): Float = sum(abs(gs), 1)(0,0)
 
     def train(it: Int = 0) {
-      var it: Int = 1
         var err = 0.0d
         var r:Int = 0
         for ( (x,y) <- trainingSet ) {
