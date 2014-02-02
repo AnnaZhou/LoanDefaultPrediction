@@ -21,6 +21,8 @@ print 'Finished loading data'
 
 # first col is ID, last is label
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.1, random_state=0)
+write_file('X_train-svm-rf.csv', X_train)
+write_file('y_train-svm-rf.csv', y_train)
 
 model = LinearSVC(C=0.01, penalty="l1", dual=False, verbose=2)
 model.fit(X_train, y_train)

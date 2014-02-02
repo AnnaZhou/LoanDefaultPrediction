@@ -37,6 +37,9 @@ def data(filename):
     data = np.asarray(X[1:,1:-4], dtype=float)
     return data, labels
 
+def write_data(d, filename):
+    np.savetxt(filename, d)
+
 def normalize(X):
     normalizer = StandardScaler(copy=False)
     return normalizer.fit_transform(X)
