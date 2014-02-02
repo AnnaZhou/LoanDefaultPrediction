@@ -18,7 +18,7 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(data[:, 1:-
 
 model = GradientBoostingClassifier(max_depth=20, learning_rate=0.01, n_estimators=300, subsample=0.3, verbose=2)
 model.fit(X_train, y_train)
-joblib.dump(model, 'random_forest_cl.pkl')
+joblib.dump(model, 'boost_cl.pkl')
 
 result = model.score(X_test, y_test)
 print result
