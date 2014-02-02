@@ -37,7 +37,7 @@ def data(filename):
     data = np.asarray(X[1:,1:-4], dtype=float)
     return data, labels
 
-def write_data(d, filename):
+def write_data(filename, d):
     np.savetxt(filename, d)
 
 def normalize(X):
