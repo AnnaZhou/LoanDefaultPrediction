@@ -1,5 +1,6 @@
 import sys
 
+from sklearn.metrics import classification_report
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn import cross_validation
 from sklearn import datasets
@@ -19,3 +20,7 @@ model.fit(X_train, y_train)
 
 result = model.score(X_test, y_test)
 print result
+
+report = classification_report(y_test, model.predict(y_test))
+print 'Report:'
+print report
