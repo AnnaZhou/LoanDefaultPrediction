@@ -24,7 +24,6 @@ result = model.score(X_test, y_test)
 print 'Results:'
 print result
 
-
 report = classification_report(y_test, model.predict(y_test))
 print 'Report:'
 print report
