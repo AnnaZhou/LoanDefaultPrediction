@@ -7,6 +7,16 @@ import math
 totals = [0 for i in xrange(800)]
 counts = [0 for i in xrange(800)]
 
+classifying = False
+if sys.argv[2] == 'c':
+    classifying = True
+
+def thresh(x):
+    if x > 0.5:
+        return 1
+    else:
+        return 0
+
 lines = 0
 print 'Munging on ' + sys.argv[1]
 for line in open(sys.argv[1], 'r'):
@@ -28,12 +38,16 @@ for line in open(sys.argv[1], 'r'):
 avgs = [totals[i]/counts[i] if counts[i]>0 else 0 for i in xrange(len(totals))]
 print 'Averages:', avgs
 
+
 lines = 0
-with open(sys.argv[1]+'_cleaned.csv', 'w') as f:
+if classifying:
+    name = sys.argv[1] + '_cleaned_c.csv'
+else:
+    name = sys.argv[1] + '_cleaned_c.csv'
+with open(name, 'w') as f:
     label_i = 0
     for line in open(sys.argv[1], 'r'):
         if lines == 0:
-            f.write(line)
             lines += 1
             continue
         if label_i == 0:
@@ -45,7 +59,10 @@ with open(sys.argv[1]+'_cleaned.csv', 'w') as f:
             f.write(',')
             try:
                 if i == label_i:
-                    f.write("%f" % float(c))
+                    if classifying:
+                        f.write("%f" % thresh(float(c)))
+                    else:
+                        f.write("%f" % float(c))
                 else:
                     f.write("%f" % math.log(abs(float(c))))
             except:
