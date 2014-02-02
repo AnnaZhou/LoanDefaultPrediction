@@ -17,3 +17,5 @@ project/plugins/project/
 log
 weights.mat
 *.gz
+
+*.pyc
