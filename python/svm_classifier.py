@@ -7,13 +7,17 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.externals import joblib
 
 import numpy as np
+from clean_csv import *
 
-from utils import *
+X, y = data(sys.argv[1])
+for i,d in enumerate(y):
+    y[i] = 1 if d > 0 else 0
 
-data = getData(sys.argv[1])
+X = normalize(X)
+print 'Finished loading data'
 
 # first col is ID, last is label
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(data[:, 1:-1], data[:, -1:] , test_size=0.15, random_state=0)
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.1, random_state=0)
 
 model = LinearSVC(C=0.01, penalty="l1", dual=False, verbose=2)
 model.fit(X_train, y_train)

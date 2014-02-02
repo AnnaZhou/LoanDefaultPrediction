@@ -1,5 +1,9 @@
 import sys
 import math
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+from sklearn.preprocessing import StandardScaler
 
 # First pass over the data: average all columns.
 # Second pass: replace each NA with the average for that column
@@ -7,67 +11,32 @@ import math
 totals = [0 for i in xrange(800)]
 counts = [0 for i in xrange(800)]
 
-classifying = False
-if sys.argv[2] == 'c':
-    classifying = True
+# Replace NA cols with column mean
+def testdata(filename):
+    X = pd.read_table(filename, sep=',', warn_bad_lines=True, error_bad_lines=True)
 
-def thresh(x):
-    if x > 0.5:
-        return 1
-    else:
-        return 0
+    X = np.asarray(X.values, dtype=float)
 
-lines = 0
-print 'Munging on ' + sys.argv[1]
-for line in open(sys.argv[1], 'r'):
-    if lines == 0:
-        lines += 1
-        continue
-    lines +=1
+    col_mean = stats.nanmean(X, axis=0)
+    inds = np.where(np.isnan(X))
+    X[inds] = np.take(col_mean, inds[1])
+    data = np.asarray(X[1:,1:-3], dtype=float)
 
-    for i,c in enumerate(line.split(',')[1:]):
-        try:
-            totals[i] += math.log(abs(float(c) + 0.001))
-            counts[i] += 1
-        except:
-            pass
+    return data
 
-    if lines % 10000 == 0:
-        print lines, 'completed for first pass'
+def data(filename):
+    X = pd.read_table(filename, sep=',', warn_bad_lines=True, error_bad_lines=True)
 
-avgs = [totals[i]/counts[i] if counts[i]>0 else 0 for i in xrange(len(totals))]
-print 'Averages:', avgs
+    X = np.asarray(X.values, dtype = float)
 
+    col_mean = stats.nanmean(X, axis=0)
+    inds = np.where(np.isnan(X))
+    X[inds]=np.take(col_mean, inds[1])
 
-lines = 0
-if classifying:
-    name = sys.argv[1] + '_cleaned_c.csv'
-else:
-    name = sys.argv[1] + '_cleaned_c.csv'
-with open(name, 'w') as f:
-    label_i = 0
-    for line in open(sys.argv[1], 'r'):
-        if lines == 0:
-            lines += 1
-            continue
-        if label_i == 0:
-            label_i = len(line.split(','))-2
-        f.write(str(lines))
-        lines += 1
+    labels = np.asarray(X[1:,-1], dtype=float)
+    data = np.asarray(X[1:,1:-4], dtype=float)
+    return data, labels
 
-        for i,c in enumerate(line.split(',')[1:]):
-            f.write(',')
-            try:
-                if i == label_i:
-                    if classifying:
-                        f.write("%f" % thresh(float(c)))
-                    else:
-                        f.write("%f" % float(c))
-                else:
-                    f.write("%f" % math.log(abs(float(c))))
-            except:
-                f.write("%f" % avgs[i])
-        f.write('\n')
-        
-        if lines % 10000 == 0:
-            print lines, 'completed for second pass'
+def normalize(X):
+    normalizer = StandardScaler(copy=False)
+    return normalizer.fit_transform(X)
