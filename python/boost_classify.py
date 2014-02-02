@@ -5,6 +5,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn import cross_validation
 from sklearn import datasets
 from sklearn.grid_search import GridSearchCV
+from sklearn.externals import joblib
 
 import numpy as np
 
@@ -17,10 +18,11 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(data[:, 1:-
 
 model = GradientBoostingClassifier(max_depth=20, learning_rate=0.01, n_estimators=300, subsample=0.3, verbose=2)
 model.fit(X_train, y_train)
+joblib.dump(model, 'random_forest_cl.pkl')
 
 result = model.score(X_test, y_test)
 print result
 
-report = classification_report(y_test, model.predict(y_test))
+report = classification_report(y_test, model.predict(X_test))
 print 'Report:'
 print report
