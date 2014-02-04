@@ -19,11 +19,14 @@ class TwoModelPredictor:
         Fit the classifier with the training data and show the AUC score.
         Then train the regressor using all training data having a nonzero label.
         """
+        print 'Fitting the TwoModelPredictor'
         self.X_train, self.y_train, = X_train, y_train
         self.X_test, self.y_test = X_test, y_test
 
         y_train_bin = self.threshold(y_train)
+        print 'Fitting the classifier'
         self.clf.fit(X_train, y_train_bin)
+	print 'Done fitting the classifier'
         auc_score = auc(y_test, self.clf.predict(X_test))
         print 'Classifier AUC =', auc_score
         
@@ -32,8 +35,10 @@ class TwoModelPredictor:
         Xy_nz = Xy[np.logical_or.reduce([Xy[:,-1] > 0])]
         X_train_nz = Xy_nz[:, :-1]
         y_train_nz = Xy_nz[:, -1]
-
+	
+	print 'Fitting the regressor'
         self.reg.fit(X_train_nz, y_train_nz)
+	print 'Done fitting the regressor'
 
     def predict(self, X):
         """

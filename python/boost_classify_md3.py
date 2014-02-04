@@ -21,7 +21,7 @@ print 'Finished loading data'
 # first col is ID, last is label
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.1, random_state=0)
 
-model = GradientBoostingClassifier(max_depth=2, learning_rate=0.01, n_estimators=300, subsample=0.3, verbose=2)
+model = GradientBoostingClassifier(max_depth=3, learning_rate=0.01, n_estimators=300, subsample=0.3, verbose=2)
 model.fit(X_train, y_train)
 #joblib.dump(model, 'boost_cl.pkl')
 

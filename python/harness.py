@@ -1,6 +1,7 @@
 from sklearn.metrics import roc_auc_score as auc
 from sklearn.metrics import mean_absolute_error as mae
 from scipy.stats import threshold
+import numpy as np
 
 class TwoModelPredictor:
 
@@ -21,10 +22,10 @@ class TwoModelPredictor:
         """
         self.X_train, self.y_train, = X_train, y_train
         self.X_test, self.y_test = X_test, y_test
-
+	
         y_train_bin = self.threshold(y_train, 0)
         self.clf.fit(X_train, y_train_bin)
-        auc_score = auc(y_test, self.clf.predict(X_test))
+        auc_score = auc(self.threshold(y_test, 0), self.clf.predict(X_test))
         print 'Classifier AUC =', auc_score
         
         # Get only the rows having nonzero label
