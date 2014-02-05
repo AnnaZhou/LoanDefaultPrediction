@@ -28,7 +28,9 @@ class TwoModelPredictor:
         self.X_test, self.y_test = X_test, y_test
 	
         y_train_bin = self.threshold(y_train, bin_thresh)
+        print 'bincount'
         print np.bincount(y_train.astype(int))
+	print 'bincount (bin)'
         print np.bincount(y_train_bin.astype(int))
         self.clf.fit(X_train, y_train_bin)
         if y_test != None:
