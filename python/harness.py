@@ -13,9 +13,13 @@ class TwoModelPredictor:
         """
         Threshold y st values < p => 0, and values > p => 1.
         """
-        return threshold(threshold(y, threshmin=p, newval=0), threshmax=p, newval=1)
+        mi = threshold(y, threshmin=p+1, newval=0)
+        #print np.bincount(mi.astype(int))
+        ma = threshold(mi, threshmax=p, newval=1)
+        #print np.bincount(ma.astype(int))
+        return ma
 
-    def fit(self, X_train, y_train, X_test, y_test=None):
+    def fit(self, X_train, y_train, X_test, y_test=None, bin_thresh=0):
         """
         Fit the classifier with the training data and show the AUC score.
         Then train the regressor using all training data having a nonzero label.
@@ -23,9 +27,12 @@ class TwoModelPredictor:
         self.X_train, self.y_train, = X_train, y_train
         self.X_test, self.y_test = X_test, y_test
 	
-        y_train_bin = self.threshold(y_train, 0)
+        y_train_bin = self.threshold(y_train, bin_thresh)
+        print np.bincount(y_train.astype(int))
+        print np.bincount(y_train_bin.astype(int))
         self.clf.fit(X_train, y_train_bin)
-        auc_score = auc(self.threshold(y_test, 0), self.clf.predict(X_test))
+        if y_test != None:
+            auc_score = auc(self.threshold(y_test, bin_thresh), self.clf.predict(X_test))
         print 'Classifier AUC =', auc_score
         
         # Get only the rows having nonzero label
@@ -43,9 +50,8 @@ class TwoModelPredictor:
         prediction for samples where the classifier predicted no default.
         """
         zpred = self.clf.predict(X)
-        zeros = np.where(pred == 0)
+        zeros = np.where(zpred == 0)
 
-        nz = pred[np.logical_or.reduce([pred[:,-1] == 1])]
         nzpred = self.reg.predict(X)
         nzpred[zeros] = 0
 
@@ -54,7 +60,7 @@ class TwoModelPredictor:
     def test(self):
         result = pred = self.predict(self.X_test)
         
-        if self.y_test:
+        if self.y_test != None:
             err = mae(self.y_test, pred)
             print 'MAE =', err
         else:
