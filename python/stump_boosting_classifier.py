@@ -22,7 +22,7 @@ else:
 
     
 
-clf = Pipeline([('Scale', StandardScaler()), ('Classifier', GradientBoostingClassifier(learning_rate=0.05, n_estimators=2000, max_depth=1, subsample=0.3, verbose=2))])
+clf = Pipeline([('Scale', StandardScaler()), ('Classifier', GradientBoostingClassifier(learning_rate=0.05, n_estimators=2000, max_depth=1, subsample=0.3, verbose=2, max_features='auto'))])
 reg = Pipeline([('Scale', StandardScaler()), ('Regressor', RandomForestRegressor(n_jobs=8, max_depth=6, n_estimators=900, verbose=2))])
 
 model = UpsamplingPredictor(clf, reg)
